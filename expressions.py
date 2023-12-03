@@ -30,6 +30,11 @@ def evaluate_expression(node, x):
         return x if node["value"] == "x" else node["value"]
     return node["function"](*[evaluate_expression(c, x) for c in node["expressions"]])
 
+def evaluate_constants(node):
+    if "expressions" not in node:
+        return node["value"]
+    return node["function"](*[evaluate_constants(c) for c in node["expressions"]])
+
 def create_expression(depth):
     # Ramped half and half
     if randint(0, 1):
@@ -39,7 +44,7 @@ def create_expression(depth):
 
 def grow(depth):
     if depth == 1 or randint(0, 2) == 0:
-        return {"value": choices(values, value_weights)[0]}
+        return {"value": choices(values)[0]}
     else:
         func = choices(functions, function_weights)[0]
         return {

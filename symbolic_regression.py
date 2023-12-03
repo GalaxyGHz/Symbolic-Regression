@@ -1,11 +1,12 @@
 import pandas as pd
-from expressions import create_expression, evaluate_expression
+from expressions import create_expression, evaluate_expression, function_weights
 import numpy as np
 import sys
 from mutation_and_crossover import sort_by_score, mutate, crossover
 from random import randint
 from copy import deepcopy
-from utils import node_count, sum_score
+from utils import node_count, sum_score, dfs
+from expressions import write_expression
 import math
 
 def calculate_score(samples, Xs, Ys, score_function):
@@ -13,10 +14,14 @@ def calculate_score(samples, Xs, Ys, score_function):
         scores = []
         for x in Xs:
             scores.append(evaluate_expression(sample, x))
-        penalty = math.sqrt(node_count(sample))
+        if Ys[-1] > 1e+10: # Adaptive power chance
+            function_weights[5] = 100
+        else:
+            function_weights[5] = 25
+        penalty = 1 + math.exp(node_count(sample) - 15) # Exponential function where up to around 10 nodes have about the same penalty
         sample["score"] = score_function(scores, Ys)*penalty
         if np.isnan(sample["score"]):
-            sample["score"] = sys.maxsize
+            sample["score"] = float("inf")
 
 # proportion is an array with the proportions of expression types of the new population
 # Expression types are as follows, by index:
@@ -55,18 +60,18 @@ def create_new_population_by_proportion(population, proportions, mutation_rate, 
 def symbolic_regression(number_of_generations, population_size, expression_depth, Xs, Ys, population_change_proportions, mutation_rate, mutation_weights, crossover_rate):
 
     expressions = [create_expression(expression_depth) for _ in range(population_size)]
-
     for generation in range(number_of_generations):
+        expressions = [dfs(expression) for expression in expressions]
+        
         print("\r" + str(round(generation/number_of_generations*100, 2)) + "%", end="")
         calculate_score(expressions, Xs, Ys, sum_score)
-
+        
         expressions = sort_by_score(expressions)
-
+        
         if expressions[0]["score"] == 0 or generation == number_of_generations - 1:
             print("\r    \r", end="")
             return expressions[0]
         
         expressions = create_new_population_by_proportion(expressions, population_change_proportions, mutation_rate, mutation_weights, crossover_rate)
-    
     # never get here
         

@@ -20,7 +20,7 @@ def divide(a, b):
 def power(a, b):
     if a == 0 and b < 0:
         return nan
-    if abs(b) > 20 or abs(a) > 1e3 or abs(a) < 1e-5:
+    if abs(b) > 100 or abs(a) > 1e3 or abs(a) < 1e-4:
         return nan
     try:
         result = a**b
@@ -28,6 +28,7 @@ def power(a, b):
             return nan
         return result
     except:
+        return nan
         print(a, b)
         exit()
 
