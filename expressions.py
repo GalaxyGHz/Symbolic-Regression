@@ -44,7 +44,7 @@ def create_expression(depth):
 
 def grow(depth):
     if depth == 1 or randint(0, 2) == 0:
-        return {"value": choices(values)[0]}
+        return {"value": choices(values, value_weights)[0]}
     else:
         func = choices(functions, function_weights)[0]
         return {
