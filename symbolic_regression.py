@@ -2,12 +2,17 @@ import pandas as pd
 from expressions import create_expression, evaluate_expression, function_weights
 import numpy as np
 import sys
-from mutation_and_crossover import sort_by_score, mutate, crossover
-from random import randint
+from mutation_and_crossover import sort_by_score, mutate, crossover, crossover_combo
+from random import randint, choices
 from copy import deepcopy
 from utils import node_count, sum_score, dfs
 from expressions import write_expression
 import math
+
+crossovers = [
+    {"function": crossover_combo},
+    {"function": crossover}, 
+]
 
 def calculate_score(samples, Xs, Ys, score_function):
     for sample in samples:
@@ -47,7 +52,9 @@ def create_new_population_by_proportion(population, proportions, mutation_rate, 
         expressions_to_crossover1 = randint(0, proportions[0])
         expressions_to_crossover2 = randint(0, proportions[0])
         # crossover returns two newly created expressions
-        new_expressions = crossover(deepcopy(population[expressions_to_crossover1]), deepcopy(population[expressions_to_crossover2]), crossover_rate)
+        crossover_weights = [50, 50]
+        crossover_function = choices(crossovers, crossover_weights)[0]
+        new_expressions = crossover_function["function"](deepcopy(population[expressions_to_crossover1]), deepcopy(population[expressions_to_crossover2]), crossover_rate)
         new_population.append(new_expressions[0]) 
         new_population.append(new_expressions[1])
 
