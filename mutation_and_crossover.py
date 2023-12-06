@@ -1,7 +1,7 @@
 from expressions import create_expression, values, value_weights, functions
 from random import randint, random, choices
 from utils import sort_by_score, sample_valid_function, select_random_node
-# from copy import deepcopy
+from copy import deepcopy
 
 TOURNAMENT_SCALE = 0.4
 
@@ -30,21 +30,21 @@ def crossover(expression1, expression2, crossover_rate):
 def crossover_combo(expression1, expression2, crossover_rate):
     crossover_node1 = select_random_node(expression1) # Select two random nodes 
     crossover_node2 = select_random_node(expression2) # Select two random nodes
-    cn1_n_tmp = crossover_node1.copy()
-    cn2_n_tmp = crossover_node2.copy()
-    # cn1_tmp = deepcopy(crossover_node1)
-    # cn2_tmp = deepcopy(crossover_node2)
+    # cn1_n_tmp = crossover_node1.copy()
+    # cn2_n_tmp = crossover_node2.copy()
+    cn1_tmp = deepcopy(crossover_node1)
+    cn2_tmp = deepcopy(crossover_node2)
     connector_node = {
         "function": functions[1]["function"], # Plus function
         "argument_count": 2,
-        "expressions": [cn1_n_tmp, cn2_n_tmp],
+        "expressions": [cn1_tmp, cn2_tmp],
         "string": functions[1]["string"], # Plus function's string
     }
     crossover_node1.clear()
     crossover_node2.clear()
     
-    crossover_node1.update(connector_node)
-    crossover_node2.update(connector_node)
+    crossover_node1.update(deepcopy(connector_node))
+    crossover_node2.update(deepcopy(connector_node))
     
     return [expression1, expression2]
 

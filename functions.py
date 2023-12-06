@@ -33,17 +33,37 @@ def power(a, b):
         exit()
 
 def sine(a):
-    return math.sin(a)
+    try:
+        result = math.sin(a)
+        return result
+    except:
+        # print("Sin", a)
+        return nan
 
 def cosine(a):
-    return math.cos(a)
+    try:
+        result = math.cos(a)
+        return result
+    except:
+        # print("Cos", a)
+        return nan
 
 def tangent(a):
-    return math.tan(a)
+    try:
+        result = math.tan(a)
+        return result
+    except:
+        # print("Tan", a)
+        return nan
 
 def logarithm(b, a):
     if a > 0 and b > 0 and b != 1:
-        return math.log(a, b)
+        try:
+            result = math.log(a,b)
+            return result
+        except:
+            # print("Log", a, b)
+            return nan
     else:
         return nan
     

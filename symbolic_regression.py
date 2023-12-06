@@ -38,8 +38,9 @@ def calculate_score(samples, Xs, Ys, score_function):
 #
 # The proportion array should sum to the population_size variable
 # population argument should be sorted
-def create_new_population_by_proportion(population, proportions, mutation_rate, mutation_weights, crossover_rate):
+def create_new_population_by_proportion(population_size, population, proportions, mutation_rate, mutation_weights, crossover_rate):
     new_population = []
+    proportions = np.round(population_size*(proportions/np.sum(proportions))).astype(np.int32)
 
     for i in range(proportions[0]):
         new_population.append(population[i])
@@ -70,15 +71,15 @@ def symbolic_regression(number_of_generations, population_size, expression_depth
     for generation in range(number_of_generations):
         expressions = [dfs(expression) for expression in expressions]
         
-        print("\r" + str(round(generation/number_of_generations*100, 2)) + "%", end="")
+        # print("\r" + str(round(generation/number_of_generations*100, 2)) + "%", end="")
         calculate_score(expressions, Xs, Ys, sum_score)
         
         expressions = sort_by_score(expressions)
         
         if expressions[0]["score"] == 0 or generation == number_of_generations - 1:
-            print("\r    \r", end="")
+            # print("\r    \r", end="")
             return expressions[0]
         
-        expressions = create_new_population_by_proportion(expressions, population_change_proportions, mutation_rate, mutation_weights, crossover_rate)
+        expressions = create_new_population_by_proportion(population_size, expressions, population_change_proportions, mutation_rate, mutation_weights, crossover_rate)
     # never get here
         
